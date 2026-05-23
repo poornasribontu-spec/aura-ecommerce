@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>My Orders</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="navbar">
+
+    <h1>My Orders</h1>
+
+    <a href="/">
+      <button class="cart-btn">
+        Back To Shop
+      </button>
+    </a>
+
+  </div>
+
+  <div id="ordersContainer"></div>
+
+  <script>
+
+    async function fetchOrders(){
+
+      const loggedInUser =
+        localStorage.getItem("loggedInUser");
+
+      const res = await fetch("/orders");
+
+      const orders = await res.json();
+
+      const myOrders = orders.filter(order =>
+        order.user === loggedInUser
+      );
+
+      const container =
+        document.getElementById("ordersContainer");
+
+      container.innerHTML = "";
+
+     myOrders.forEach(order => {
+
+  if(order.totalAmount <= 0) return;
+
+        let productsHTML = "";
+
+        order.products.forEach(product => {
+
+          productsHTML += `
+
+            <p>${product.name} - ₹${product.price}</p>
+
+          `;
+
+        });
+
+        container.innerHTML += `
+
+          <div class="product">
+
+            <h2>Order</h2>
+
+            ${productsHTML}
+
+            <h3>Total: ₹${order.totalAmount}</h3>
+
+          </div>
+
+        `;
+
+      });
+
+    }
+
+    fetchOrders();
+
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>Order Success</title>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <div class="success-container">
+
+    <div class="success-card">
+
+      <div class="checkmark">
+        ✔
+      </div>
+
+      <h1>
+        Payment Successful
+      </h1>
+
+      <p>
+        Your order has been placed successfully.
+      </p>
+
+      <h3 id="orderId"></h3>
+
+      <a href="/">
+
+        <button class="cart-btn">
+          Continue Shopping
+        </button>
+
+      </a>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    const randomId =
+      "ORD" +
+      Math.floor(Math.random() * 999999);
+
+    document.getElementById("orderId")
+    .innerText =
+      "Order ID: " + randomId;
+
+  </script>
+
+</body>
+
+</html>

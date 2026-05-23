@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Ecommerce Store</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <div id="toast"></div>
+  <div id="productModal" class="modal">
+
+  <div class="modal-content">
+
+    <span class="close-btn" onclick="closeModal()">
+      &times;
+    </span>
+
+    <img id="modalImage">
+
+    <h2 id="modalTitle"></h2>
+
+    <p id="modalPrice"></p>
+
+    <p id="modalDesc"></p>
+
+    <button class="buy-now-btn">
+      Buy Now
+    </button>
+    <div class="review-section">
+
+  <h3>
+    Customer Reviews
+  </h3>
+
+  <textarea
+    id="reviewInput"
+    placeholder="Write your review..."
+  ></textarea>
+
+  <button onclick="addReview()">
+    Submit Review
+  </button>
+
+  <div id="reviewsList"></div>
+
+</div>
+
+  </div>
+
+</div>
+
+  <div class="navbar">
+    <div
+  class="menu-icon"
+  onclick="toggleMenu()"
+>
+  ☰
+</div>
+
+  <h1>🛍 Velvora</h1>
+
+  <input 
+    type="text"
+    id="searchInput"
+    placeholder="Search products..."
+  >
+  <select id="categoryFilter">
+
+  <option value="all">
+    All
+  </option>
+
+  <option value="electronics">
+    Electronics
+  </option>
+
+  <option value="fashion">
+    Fashion
+  </option>
+
+</select>
+<select id="sortFilter">
+
+  <option value="default">
+    Sort By
+  </option>
+
+  <option value="low">
+    Price: Low To High
+  </option>
+
+  <option value="high">
+    Price: High To Low
+  </option>
+
+</select>
+  <a href="cart.html">
+
+  <button class="cart-btn cart-wrapper">
+
+    🛒 Cart
+
+    <span id="cartCount">
+      0
+    </span>
+
+  </button>
+
+</a>
+  <a href="orders.html">
+
+  <button class="cart-btn">
+    My Orders
+  </button>
+
+</a>
+<button class="cart-btn" onclick="toggleDarkMode()">
+  🌙 Dark Mode
+</button>
+
+  <button class="cart-btn" onclick="logout()">
+  Logout
+</button>
+<a href="wishlist.html">
+
+  <button class="cart-btn">
+    Wishlist
+  </button>
+
+</a>
+
+</div>
+<section class="hero">
+
+  <div class="hero-content">
+
+    <span class="sale-badge">
+      Mega Sale
+    </span>
+
+    <h2>
+      Big Deals On Top Brands
+    </h2>
+
+    <p>
+      Grab the best products at unbeatable prices!
+    </p>
+
+    <button class="shop-btn">
+      Shop Now →
+    </button>
+
+  </div>
+
+  <img
+    src="https://pngimg.com/uploads/headphones/headphones_PNG101982.png"
+    class="hero-image"
+  >
+
+</section>
+<div class="featured-slider">
+
+  <h2>
+    Trending Products
+  </h2>
+
+<div class="slider-track">
+
+  <img src="https://m.media-amazon.com/images/I/61CGHv6kmWL._SX679_.jpg">
+
+  <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1200">
+
+  <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1200">
+
+  <img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?q=80&w=1200">
+
+  <img src="https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=1200">
+
+</div>
+
+</div>
+<section class="features">
+
+  <div class="feature-box">
+
+    🚚
+
+    <h3>Free Shipping</h3>
+
+    <p>On orders above ₹999</p>
+
+  </div>
+
+  <div class="feature-box">
+
+    🔄
+
+    <h3>Easy Returns</h3>
+
+    <p>7 day return policy</p>
+
+  </div>
+
+  <div class="feature-box">
+
+    🔒
+
+    <h3>Secure Payment</h3>
+
+    <p>100% safe checkout</p>
+
+  </div>
+
+  <div class="feature-box">
+
+    💬
+
+    <h3>24/7 Support</h3>
+
+    <p>Customer support</p>
+
+  </div>
+
+</section>
+  <div class="main-layout">
+
+  <aside class="sidebar">
+
+    <h2>Categories</h2>
+
+    <ul>
+
+      <li>📱 Electronics</li>
+
+      <li>👟 Fashion</li>
+
+      <li>💻 Laptops</li>
+
+      <li>🎒 Accessories</li>
+
+    </ul>
+
+    <h2>Filters</h2>
+
+    <p>⭐ 4 Stars & Above</p>
+
+    <p>💰 Budget Friendly</p>
+
+    <p>🚚 Free Shipping</p>
+
+  </aside>
+
+  <div class="products-section">
+
+    <h2 class="section-title">
+      Featured Products
+    </h2>
+
+    <div id="products">
+
+  <div class="skeleton-card"></div>
+
+  <div class="skeleton-card"></div>
+
+  <div class="skeleton-card"></div>
+
+  <div class="skeleton-card"></div>
+
+</div>
+
+  </div>
+
+</div>
+<footer class="footer">
+
+  <div class="footer-container">
+
+    <div class="footer-section">
+
+      <h2>🛍 Velvora</h2>
+
+      <p>
+        Your premium destination for
+        modern shopping experience.
+      </p>
+
+    </div>
+
+    <div class="footer-section">
+
+      <h3>Quick Links</h3>
+
+      <p>Home</p>
+
+      <p>Products</p>
+
+      <p>Cart</p>
+
+      <p>Orders</p>
+
+    </div>
+
+    <div class="footer-section">
+
+      <h3>Support</h3>
+
+      <p>Email Support</p>
+
+      <p>Help Center</p>
+
+      <p>Returns</p>
+
+      <p>Privacy Policy</p>
+
+    </div>
+
+    <div class="footer-section">
+
+      <h3>Follow Us</h3>
+
+      <p>📘 Facebook</p>
+
+      <p>📸 Instagram</p>
+
+      <p>🐦 Twitter</p>
+
+      <p>💼 LinkedIn</p>
+
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+
+    © 2026 Velvora.
+    All Rights Reserved.
+
+  </div>
+
+</footer>
+  <script src="script.js"></script>
+
+</body>
+
+</html>

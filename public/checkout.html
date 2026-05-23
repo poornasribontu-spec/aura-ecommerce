@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>Checkout</title>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <div class="success-container">
+
+    <div class="success-card">
+
+      <h1>
+        Checkout
+      </h1>
+
+      <p>
+        Confirm your payment
+      </p>
+
+      <!-- NAME -->
+
+      <input
+        type="text"
+        id="customerName"
+        placeholder="Enter Your Name"
+      >
+
+      <!-- PHONE -->
+
+      <input
+        type="text"
+        id="customerPhone"
+        placeholder="Enter Phone Number"
+      >
+
+      <!-- ADDRESS -->
+
+      <textarea
+        id="customerAddress"
+        placeholder="Enter Delivery Address"
+      ></textarea>
+
+      <!-- PAYMENT METHOD -->
+
+      <select id="paymentMethod">
+
+        <option value="">
+          Select Payment Method
+        </option>
+
+        <option value="COD">
+          Cash On Delivery
+        </option>
+
+        <option value="Card">
+          Card Payment
+        </option>
+
+      </select>
+
+      <!-- TOTAL -->
+
+      <h2 id="finalTotal"></h2>
+
+      <!-- BUTTON -->
+
+      <button
+        class="cart-btn"
+        onclick="makePayment()"
+      >
+        Pay Now
+      </button>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    let cart =
+      JSON.parse(localStorage.getItem("cart"))
+      || [];
+
+    let total = 0;
+
+    cart.forEach(product => {
+
+      total +=
+        product.price * product.quantity;
+
+    });
+
+    document.getElementById(
+      "finalTotal"
+    ).innerText =
+      "Total Amount: ₹" + total;
+
+    async function makePayment(){
+
+      // GET INPUT VALUES
+
+      const name =
+        document.getElementById(
+          "customerName"
+        ).value.trim();
+
+      const phone =
+        document.getElementById(
+          "customerPhone"
+        ).value.trim();
+
+      const address =
+        document.getElementById(
+          "customerAddress"
+        ).value.trim();
+
+      const payment =
+        document.getElementById(
+          "paymentMethod"
+        ).value;
+
+      // VALIDATION
+
+      if(
+        !name ||
+        !phone ||
+        !address ||
+        !payment
+      ){
+
+        alert(
+          "Please Fill All Details"
+        );
+
+        return;
+
+      }
+
+      // PHONE VALIDATION
+
+      if(phone.length !== 10){
+
+        alert(
+          "Enter Valid 10 Digit Phone Number"
+        );
+
+        return;
+
+      }
+
+      // SAVE ORDER
+
+      await fetch("/place-order", {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+          products: cart,
+
+          totalAmount: total,
+
+          user: name,
+
+          phone: phone,
+
+          address: address,
+
+          paymentMethod: payment
+
+        })
+
+      });
+
+      // CLEAR CART
+
+      localStorage.removeItem("cart");
+
+      // REDIRECT
+
+      window.location.href =
+        "/success.html";
+
+    }
+
+  </script>
+
+</body>
+
+</html>

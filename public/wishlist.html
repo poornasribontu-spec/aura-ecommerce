@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Wishlist</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+  <div class="navbar">
+
+    <h1>My Wishlist</h1>
+
+    <a href="/">
+      <button class="cart-btn">
+        Back To Shop
+      </button>
+    </a>
+
+  </div>
+
+  <div id="wishlistContainer"></div>
+
+  <script>
+
+    let wishlist =
+      JSON.parse(localStorage.getItem("wishlist"))
+      || [];
+
+    const container =
+      document.getElementById("wishlistContainer");
+
+    function displayWishlist(){
+
+      container.innerHTML = "";
+
+      wishlist.forEach((product, index) => {
+
+        container.innerHTML += `
+
+          <div class="product">
+
+            <img src="${product.image}">
+
+            <h2>${product.name}</h2>
+
+            <p>₹${product.price}</p>
+
+            <button onclick="removeWishlist(${index})">
+              Remove
+            </button>
+
+          </div>
+
+        `;
+
+      });
+
+    }
+
+    function removeWishlist(index){
+
+      wishlist.splice(index, 1);
+
+      localStorage.setItem(
+        "wishlist",
+        JSON.stringify(wishlist)
+      );
+
+      displayWishlist();
+
+    }
+
+    displayWishlist();
+
+  </script>
+
+</body>
+
+</html>

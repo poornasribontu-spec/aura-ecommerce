@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+  <title>Admin Dashboard</title>
+
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+  <div class="navbar">
+
+    <h1>
+      Admin Dashboard
+    </h1>
+
+    <a href="/">
+
+      <button class="cart-btn">
+        Back To Store
+      </button>
+
+    </a>
+
+  </div>
+
+  <div class="admin-container">
+
+    <!-- ADD PRODUCT -->
+
+    <h2 class="section-title">
+      Add Product
+    </h2>
+
+    <input
+      type="text"
+      id="name"
+      placeholder="Product Name"
+    >
+
+    <input
+      type="number"
+      id="price"
+      placeholder="Price"
+    >
+
+    <input
+      type="text"
+      id="image"
+      placeholder="Image URL"
+    >
+
+    <input
+      type="text"
+      id="category"
+      placeholder="Category"
+    >
+
+    <textarea
+      id="description"
+      placeholder="Description"
+    ></textarea>
+
+    <button id="mainButton" onclick="addProduct()">
+      Add Product
+    </button>
+
+    <!-- PRODUCTS -->
+
+    <h2 class="section-title">
+      All Products
+    </h2>
+
+    <div id="adminProducts"></div>
+
+    <!-- ORDERS -->
+
+    <h2 class="section-title">
+      Orders
+    </h2>
+
+    <div id="ordersContainer"></div>
+
+  </div>
+
+  <script>
+
+    // LOAD PRODUCTS
+
+    async function loadProducts(){
+
+      const res =
+        await fetch("/products");
+
+      const products =
+        await res.json();
+
+      const container =
+        document.getElementById(
+          "adminProducts"
+        );
+
+      container.innerHTML = "";
+
+      products.forEach(product => {
+
+        container.innerHTML += `
+
+          <div class="cart-product">
+
+            <img src="${product.image}">
+
+            <h2>
+              ${product.name}
+            </h2>
+
+            <p>
+              ₹${product.price}
+            </p>
+
+            <p>
+              ${product.category}
+            </p>
+
+            <button
+              onclick="deleteProduct('${product._id}')"
+            >
+              Delete
+            </button>
+
+            <button
+              onclick="editProduct(
+                '${product._id}',
+                '${product.name}',
+                '${product.price}',
+                '${product.image}',
+                '${product.category}',
+                '${product.description}'
+              )"
+            >
+              Edit
+            </button>
+
+          </div>
+
+        `;
+
+      });
+
+    }
+
+    // LOAD ORDERS
+
+    async function loadOrders(){
+
+      const res =
+        await fetch("/orders");
+
+      const orders =
+        await res.json();
+
+      const container =
+        document.getElementById(
+          "ordersContainer"
+        );
+
+      container.innerHTML = "";
+
+      orders.forEach(order => {
+
+        container.innerHTML += `
+
+          <div class="cart-product">
+
+            <h2>
+              Order Details
+            </h2>
+
+            <p>
+              User:
+              ${order.user}
+            </p>
+
+            <p>
+              Phone:
+              ${order.phone}
+            </p>
+
+            <p>
+              Address:
+              ${order.address}
+            </p>
+
+            <p>
+              Payment:
+              ${order.paymentMethod}
+            </p>
+
+            <p>
+              Total:
+              ₹${order.totalAmount}
+            </p>
+
+            <p>
+              Products:
+              ${order.products.length}
+            </p>
+
+          </div>
+
+        `;
+
+      });
+
+    }
+
+    // DELETE PRODUCT
+
+    async function deleteProduct(id){
+
+      await fetch(
+
+        "/delete-product/" + id,
+
+        {
+          method: "DELETE"
+        }
+
+      );
+
+      alert("Product Deleted");
+
+      loadProducts();
+
+    }
+
+    // ADD PRODUCT
+
+    async function addProduct(){
+
+      const product = {
+
+        name:
+          document.getElementById("name").value,
+
+        price:
+          document.getElementById("price").value,
+
+        image:
+          document.getElementById("image").value,
+
+        category:
+          document.getElementById("category").value,
+
+        description:
+          document.getElementById("description").value
+
+      };
+
+      await fetch("/add-product-admin", {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify(product)
+
+      });
+
+      alert("Product Added");
+
+      location.reload();
+
+    }
+
+    // EDIT PRODUCT
+
+    function editProduct(
+      id,
+      name,
+      price,
+      image,
+      category,
+      description
+    ){
+
+      document.getElementById("name").value =
+        name;
+
+      document.getElementById("price").value =
+        price;
+
+      document.getElementById("image").value =
+        image;
+
+      document.getElementById("category").value =
+        category;
+
+      document.getElementById("description").value =
+        description;
+
+      const button =
+        document.getElementById(
+          "mainButton"
+        );
+
+      button.innerText =
+        "Update Product";
+
+      button.onclick = () => {
+        updateProduct(id);
+      };
+
+    }
+
+    // UPDATE PRODUCT
+
+    async function updateProduct(id){
+
+      const updatedProduct = {
+
+        name:
+          document.getElementById("name").value,
+
+        price:
+          document.getElementById("price").value,
+
+        image:
+          document.getElementById("image").value,
+
+        category:
+          document.getElementById("category").value,
+
+        description:
+          document.getElementById("description").value
+
+      };
+
+      await fetch(
+
+        "/update-product/" + id,
+
+        {
+
+          method: "PUT",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify(updatedProduct)
+
+        }
+
+      );
+
+      alert("Product Updated");
+
+      location.reload();
+
+    }
+
+    // INITIAL LOAD
+
+    loadProducts();
+
+    loadOrders();
+
+  </script>
+
+</body>
+
+</html>
