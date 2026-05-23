@@ -12,12 +12,23 @@ require("dotenv").config();
 
 const app = express();
 
+// ============================
+// MIDDLEWARE
+// ============================
+
 app.use(cors());
 
 app.use(express.json());
 
 app.use(express.static("public"));
 
+// ============================
+// HOME ROUTE
+// ============================
+
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
 
 // ============================
 // CONNECT MONGODB
@@ -36,18 +47,6 @@ mongoose.connect(process.env.MONGO_URI)
   console.log(err);
 
 });
-
-
-// ============================
-// HOME ROUTE
-// ============================
-
-app.get("/", (req, res) => {
-
-  res.send("Server Running");
-
-});
-
 
 // ============================
 // RESET PRODUCTS
@@ -112,7 +111,6 @@ app.get("/add-product", async (req, res) => {
 
 });
 
-
 // ============================
 // GET PRODUCTS
 // ============================
@@ -124,7 +122,6 @@ app.get("/products", async (req, res) => {
   res.json(products);
 
 });
-
 
 // ============================
 // REGISTER
@@ -140,8 +137,6 @@ app.post("/register", async (req, res) => {
       password
     } = req.body;
 
-    // CHECK EXISTING USER
-
     const existingUser =
       await User.findOne({ email });
 
@@ -153,8 +148,6 @@ app.post("/register", async (req, res) => {
       });
 
     }
-
-    // HASH PASSWORD
 
     const hashedPassword =
       await bcrypt.hash(password, 10);
@@ -187,7 +180,6 @@ app.post("/register", async (req, res) => {
 
 });
 
-
 // ============================
 // LOGIN
 // ============================
@@ -204,8 +196,6 @@ app.post("/login", async (req, res) => {
     const user =
       await User.findOne({ email });
 
-    // CHECK USER
-
     if(!user){
 
       return res.json({
@@ -214,8 +204,6 @@ app.post("/login", async (req, res) => {
       });
 
     }
-
-    // CHECK PASSWORD
 
     const isMatch =
       await bcrypt.compare(
@@ -254,7 +242,6 @@ app.post("/login", async (req, res) => {
   }
 
 });
-
 
 // ============================
 // PLACE ORDER
@@ -314,7 +301,6 @@ app.post("/place-order", async (req, res) => {
 
 });
 
-
 // ============================
 // GET ORDERS
 // ============================
@@ -327,7 +313,6 @@ app.get("/orders", async (req, res) => {
   res.json(orders);
 
 });
-
 
 // ============================
 // ADD PRODUCT ADMIN
@@ -347,7 +332,6 @@ app.post("/add-product-admin", async (req, res) => {
 
 });
 
-
 // ============================
 // DELETE PRODUCT
 // ============================
@@ -364,7 +348,6 @@ app.delete("/delete-product/:id", async (req, res) => {
   });
 
 });
-
 
 // ============================
 // UPDATE PRODUCT
@@ -386,7 +369,6 @@ app.put("/update-product/:id", async (req, res) => {
   });
 
 });
-
 
 // ============================
 // SEARCH PRODUCTS
@@ -414,7 +396,6 @@ app.get("/search", async (req, res) => {
 
 });
 
-
 // ============================
 // FILTER PRODUCTS
 // ============================
@@ -433,12 +414,11 @@ app.get("/category/:name", async (req, res) => {
 
 });
 
-
 // ============================
 // SERVER
 // ============================
 
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
 
