@@ -1,8 +1,3 @@
-app.use(express.static("public"));
-
-app.get("/", (req, res) => {
-    res.sendFile(__dirname + "/public/index.html");
-});
 require('dns').setDefaultResultOrder('ipv4first');
 
 const express = require("express");
@@ -422,9 +417,7 @@ app.get("/category/:name", async (req, res) => {
 // ============================
 // SERVER
 // ============================
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/public/index.html");
-});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
