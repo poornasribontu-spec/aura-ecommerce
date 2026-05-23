@@ -437,7 +437,9 @@ app.get("/category/:name", async (req, res) => {
 // ============================
 // SERVER
 // ============================
-
+app.get("/", (req, res) => {
+  res.sendFile(__dirname + "/public/index.html");
+});
 const PORT = 5000;
 
 app.listen(PORT, () => {
