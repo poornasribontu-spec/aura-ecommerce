@@ -2,63 +2,239 @@
 <html>
 
 <head>
-  <title>Register</title>
+
+  <title>Aura Register</title>
+
   <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-  <div class="product">
+  <div class="product register-container">
 
-    <h1>🛍 Velvora Register</h1>
+    <h1>
+      🛍 Aura Register
+    </h1>
 
-    <input type="text" id="username" placeholder="Username">
+    <p>
+      Create your Aura account
+    </p>
+
+    <!-- USERNAME -->
+
+    <input
+      type="text"
+      id="username"
+      placeholder="Enter Username"
+    >
+
     <br><br>
 
-    <input type="email" id="email" placeholder="Email">
+    <!-- EMAIL -->
+
+    <input
+      type="email"
+      id="email"
+      placeholder="Enter Email"
+    >
+
     <br><br>
 
-    <input type="password" id="password" placeholder="Password">
+    <!-- PASSWORD -->
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Enter Password"
+    >
+
     <br><br>
 
-    <button onclick="registerUser()">
+    <!-- REGISTER BUTTON -->
+
+    <button
+      id="registerBtn"
+      onclick="registerUser()"
+    >
       Register
     </button>
+
+    <br><br>
+
+    <!-- LOGIN LINK -->
+
+    <p>
+
+      Already have an account?
+
+      <a href="/login.html">
+        Login
+      </a>
+
+    </p>
 
   </div>
 
   <script>
 
+    // =========================
+    // ENTER KEY REGISTER
+    // =========================
+
+    document.addEventListener(
+
+      "keypress",
+
+      function(event){
+
+        if(event.key === "Enter"){
+
+          registerUser();
+
+        }
+
+      }
+
+    );
+
+    // =========================
+    // REGISTER USER
+    // =========================
+
     async function registerUser(){
 
-      const username =
-        document.getElementById("username").value;
+      try {
 
-      const email =
-        document.getElementById("email").value;
+        const username =
+          document.getElementById(
+            "username"
+          ).value.trim();
 
-      const password =
-        document.getElementById("password").value;
+        const email =
+          document.getElementById(
+            "email"
+          ).value.trim();
 
-      const res = await fetch("/register", {
+        const password =
+          document.getElementById(
+            "password"
+          ).value.trim();
 
-        method: "POST",
+        // VALIDATION
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+        if(
+          !username ||
+          !email ||
+          !password
+        ){
 
-        body: JSON.stringify({
-          username,
-          email,
-          password
-        })
+          alert(
+            "Please Fill All Fields"
+          );
 
-      });
+          return;
 
-      const data = await res.json();
+        }
 
-      alert(data.message);
+        // EMAIL VALIDATION
+
+        const emailRegex =
+          /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+        if(
+          !emailRegex.test(email)
+        ){
+
+          alert(
+            "Enter Valid Email"
+          );
+
+          return;
+
+        }
+
+        // PASSWORD VALIDATION
+
+        if(password.length < 6){
+
+          alert(
+            "Password Must Be At Least 6 Characters"
+          );
+
+          return;
+
+        }
+
+        // BUTTON LOADING
+
+        const registerBtn =
+          document.getElementById(
+            "registerBtn"
+          );
+
+        registerBtn.disabled = true;
+
+        registerBtn.innerText =
+          "Registering...";
+
+        // API CALL
+
+        const res =
+          await fetch("/register", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+
+              username,
+
+              email,
+
+              password
+
+            })
+
+          });
+
+        const data =
+          await res.json();
+
+        alert(data.message);
+
+        // SUCCESS REGISTER
+
+        if(
+          data.message ===
+          "User Registered Successfully"
+        ){
+
+          window.location.href =
+            "/login.html";
+
+        }
+
+        // RESET BUTTON
+
+        registerBtn.disabled = false;
+
+        registerBtn.innerText =
+          "Register";
+
+      } catch(error){
+
+        console.log(error);
+
+        alert(
+          "Registration Failed"
+        );
+
+      }
 
     }
 

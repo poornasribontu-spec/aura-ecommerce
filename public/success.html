@@ -13,11 +13,15 @@
 
   <div class="success-container">
 
-    <div class="success-card">
+    <div class="success-card fade-in">
+
+      <!-- CHECKMARK -->
 
       <div class="checkmark">
         ✔
       </div>
+
+      <!-- SUCCESS TEXT -->
 
       <h1>
         Payment Successful
@@ -27,7 +31,19 @@
         Your order has been placed successfully.
       </p>
 
+      <!-- USER -->
+
+      <h3 id="customerName"></h3>
+
+      <!-- ORDER ID -->
+
       <h3 id="orderId"></h3>
+
+      <!-- DELIVERY -->
+
+      <p id="deliveryText"></p>
+
+      <!-- CONTINUE SHOPPING -->
 
       <a href="/">
 
@@ -43,13 +59,93 @@
 
   <script>
 
-    const randomId =
-      "ORD" +
-      Math.floor(Math.random() * 999999);
+    // =========================
+    // GENERATE ORDER ID
+    // =========================
 
-    document.getElementById("orderId")
-    .innerText =
-      "Order ID: " + randomId;
+    let orderId =
+      localStorage.getItem(
+        "latestOrderId"
+      );
+
+    if(!orderId){
+
+      orderId =
+        "ORD" +
+        Math.floor(
+          100000 +
+          Math.random() * 900000
+        );
+
+      localStorage.setItem(
+
+        "latestOrderId",
+
+        orderId
+
+      );
+
+    }
+
+    // =========================
+    // DISPLAY ORDER ID
+    // =========================
+
+    document.getElementById(
+      "orderId"
+    ).innerText =
+      "Order ID: " + orderId;
+
+    // =========================
+    // CUSTOMER NAME
+    // =========================
+
+    const user =
+      localStorage.getItem(
+        "loggedInUser"
+      );
+
+    if(user){
+
+      document.getElementById(
+        "customerName"
+      ).innerText =
+        "Thank You, " + user;
+
+    }
+
+    // =========================
+    // DELIVERY DATE
+    // =========================
+
+    const today =
+      new Date();
+
+    today.setDate(
+      today.getDate() + 5
+    );
+
+    const deliveryDate =
+      today.toDateString();
+
+    document.getElementById(
+      "deliveryText"
+    ).innerText =
+
+      "Estimated Delivery: " +
+      deliveryDate;
+
+    // =========================
+    // CLEAR ORDER ID AFTER 10s
+    // =========================
+
+    setTimeout(() => {
+
+      localStorage.removeItem(
+        "latestOrderId"
+      );
+
+    }, 10000);
 
   </script>
 

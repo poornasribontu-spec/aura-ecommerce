@@ -2,79 +2,219 @@
 <html>
 
 <head>
-  <title>My Orders</title>
+
+  <title>Aura Orders</title>
+
   <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
+  <!-- NAVBAR -->
+
   <div class="navbar">
 
-    <h1>My Orders</h1>
+    <h1>
+      My Orders
+    </h1>
 
     <a href="/">
+
       <button class="cart-btn">
         Back To Shop
       </button>
+
     </a>
 
   </div>
 
+  <!-- ORDERS -->
+
   <div id="ordersContainer"></div>
+
+  <!-- EMPTY ORDERS -->
+
+  <div
+    id="emptyOrders"
+    style="display:none;"
+  >
+
+    <h1>
+      📦 No Orders Yet
+    </h1>
+
+    <p>
+      Start shopping to place your first order.
+    </p>
+
+  </div>
 
   <script>
 
-    async function fetchOrders(){
+    // =========================
+    // CHECK LOGIN
+    // =========================
 
-      const loggedInUser =
-        localStorage.getItem("loggedInUser");
-
-      const res = await fetch("/orders");
-
-      const orders = await res.json();
-
-      const myOrders = orders.filter(order =>
-        order.user === loggedInUser
+    const loggedInUser =
+      localStorage.getItem(
+        "loggedInUser"
       );
 
-      const container =
-        document.getElementById("ordersContainer");
+    if(!loggedInUser){
 
-      container.innerHTML = "";
+      alert(
+        "Please Login First"
+      );
 
-     myOrders.forEach(order => {
+      window.location.href =
+        "/login.html";
 
-  if(order.totalAmount <= 0) return;
+    }
 
-        let productsHTML = "";
+    // =========================
+    // FETCH ORDERS
+    // =========================
 
-        order.products.forEach(product => {
+    async function fetchOrders(){
 
-          productsHTML += `
+      try {
 
-            <p>${product.name} - ₹${product.price}</p>
+        const res =
+          await fetch("/orders");
+
+        const orders =
+          await res.json();
+
+        const myOrders =
+          orders.filter(order =>
+
+            order.user ===
+            loggedInUser
+
+          );
+
+        const container =
+          document.getElementById(
+            "ordersContainer"
+          );
+
+        container.innerHTML = "";
+
+        // EMPTY ORDERS
+
+        if(myOrders.length === 0){
+
+          document.getElementById(
+            "emptyOrders"
+          ).style.display = "block";
+
+          return;
+
+        }
+
+        // DISPLAY ORDERS
+
+        myOrders.forEach(order => {
+
+          if(order.totalAmount <= 0)
+            return;
+
+          let productsHTML = "";
+
+          order.products.forEach(product => {
+
+            productsHTML += `
+
+              <div class="order-product">
+
+                <p>
+                  ${product.name}
+                </p>
+
+                <p>
+                  ₹${product.price}
+                </p>
+
+                <p>
+                  Quantity:
+                  ${product.quantity}
+                </p>
+
+              </div>
+
+            `;
+
+          });
+
+          container.innerHTML += `
+
+            <div class="product">
+
+              <h2>
+                📦 Order
+              </h2>
+
+              ${productsHTML}
+
+              <p>
+
+                <strong>
+                  Payment:
+                </strong>
+
+                ${order.paymentMethod}
+
+              </p>
+
+              <p>
+
+                <strong>
+                  Address:
+                </strong>
+
+                ${order.address}
+
+              </p>
+
+              <p>
+
+                <strong>
+                  Phone:
+                </strong>
+
+                ${order.phone}
+
+              </p>
+
+              <h3>
+
+                Total:
+                ₹${order.totalAmount}
+
+              </h3>
+
+            </div>
 
           `;
 
         });
 
-        container.innerHTML += `
+      } catch(error){
 
-          <div class="product">
+        console.log(error);
 
-            <h2>Order</h2>
+        alert(
+          "Failed To Load Orders"
+        );
 
-            ${productsHTML}
-
-            <h3>Total: ₹${order.totalAmount}</h3>
-
-          </div>
-
-        `;
-
-      });
+      }
 
     }
+
+    // =========================
+    // INITIAL LOAD
+    // =========================
 
     fetchOrders();
 

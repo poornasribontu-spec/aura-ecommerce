@@ -23,11 +23,31 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // ============================
-// HOME ROUTE
+// HTML ROUTES
 // ============================
 
 app.get("/", (req, res) => {
   res.sendFile(__dirname + "/public/index.html");
+});
+
+app.get("/admin", (req, res) => {
+  res.sendFile(__dirname + "/public/admin.html");
+});
+
+app.get("/cart", (req, res) => {
+  res.sendFile(__dirname + "/public/cart.html");
+});
+
+app.get("/login", (req, res) => {
+  res.sendFile(__dirname + "/public/login.html");
+});
+
+app.get("/register", (req, res) => {
+  res.sendFile(__dirname + "/public/register.html");
+});
+
+app.get("/checkout", (req, res) => {
+  res.sendFile(__dirname + "/public/checkout.html");
 });
 
 // ============================

@@ -3,7 +3,7 @@
 
 <head>
 
-  <title>Product Details</title>
+  <title>Aura Product Details</title>
 
   <link rel="stylesheet" href="style.css">
 
@@ -11,9 +11,13 @@
 
 <body>
 
+  <!-- NAVBAR -->
+
   <div class="navbar">
 
-    <h1>ShopEase</h1>
+    <h1>
+      🛍 Aura
+    </h1>
 
     <a href="/">
 
@@ -25,58 +29,199 @@
 
   </div>
 
-  <div id="productDetails"></div>
+  <!-- PRODUCT DETAILS -->
+
+  <div id="productDetails">
+
+    <h2 style="text-align:center;">
+      Loading Product...
+    </h2>
+
+  </div>
 
   <script>
 
-    async function loadProduct() {
+    // =========================
+    // LOAD PRODUCT
+    // =========================
 
-      const params =
-        new URLSearchParams(window.location.search);
+    async function loadProduct(){
 
-      const id = params.get("id");
+      try {
 
-      const res = await fetch("/products");
+        const params =
+          new URLSearchParams(
+            window.location.search
+          );
 
-      const products = await res.json();
+        const id =
+          params.get("id");
 
-      const product =
-        products.find(p => p._id === id);
+        // INVALID ID
 
-      const container =
-        document.getElementById("productDetails");
+        if(!id){
 
-      container.innerHTML = `
+          document.getElementById(
+            "productDetails"
+          ).innerHTML = `
 
-        <div class="product fade-in">
+            <h2 style="text-align:center;">
 
-          <img src="${product.image}">
+              Product Not Found
 
-          <h1>${product.name}</h1>
+            </h2>
 
-          <h2>₹${product.price}</h2>
+          `;
 
-          <p>${product.description}</p>
+          return;
 
-          <button onclick='addToCart(${JSON.stringify(product)})'>
-            Add To Cart
-          </button>
+        }
 
-        </div>
+        // FETCH PRODUCTS
 
-      `;
+        const res =
+          await fetch("/products");
+
+        const products =
+          await res.json();
+
+        const product =
+          products.find(
+
+            p => p._id === id
+
+          );
+
+        // PRODUCT NOT FOUND
+
+        if(!product){
+
+          document.getElementById(
+            "productDetails"
+          ).innerHTML = `
+
+            <h2 style="text-align:center;">
+
+              Product Not Found
+
+            </h2>
+
+          `;
+
+          return;
+
+        }
+
+        // DISPLAY PRODUCT
+
+        const container =
+          document.getElementById(
+            "productDetails"
+          );
+
+        container.innerHTML = `
+
+          <div class="product fade-in">
+
+            <img
+              src="${product.image}"
+              alt="${product.name}"
+            >
+
+            <h1>
+              ${product.name}
+            </h1>
+
+            <h2>
+              ₹${product.price}
+            </h2>
+
+            <p>
+              ${product.description}
+            </p>
+
+            <p>
+
+              <strong>
+                Category:
+              </strong>
+
+              ${product.category}
+
+            </p>
+
+            <div class="product-buttons">
+
+              <button
+                onclick="addToCart('${product._id}')"
+              >
+                Add To Cart
+              </button>
+
+              <button
+                onclick="addToWishlist('${product._id}')"
+              >
+                ❤️ Wishlist
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+
+      } catch(error){
+
+        console.log(error);
+
+        document.getElementById(
+          "productDetails"
+        ).innerHTML = `
+
+          <h2 style="text-align:center;">
+
+            Failed To Load Product
+
+          </h2>
+
+        `;
+
+      }
 
     }
 
-    function addToCart(product){
+    // =========================
+    // ADD TO CART
+    // =========================
+
+    async function addToCart(id){
+
+      const res =
+        await fetch("/products");
+
+      const products =
+        await res.json();
+
+      const product =
+        products.find(
+
+          p => p._id === id
+
+        );
 
       let cart =
-        JSON.parse(localStorage.getItem("cart"))
-        || [];
+        JSON.parse(
 
-      const existingProduct = cart.find(item =>
-        item._id === product._id
-      );
+          localStorage.getItem("cart")
+
+        ) || [];
+
+      const existingProduct =
+        cart.find(
+
+          item => item._id === id
+
+        );
 
       if(existingProduct){
 
@@ -91,13 +236,83 @@
       }
 
       localStorage.setItem(
+
         "cart",
+
         JSON.stringify(cart)
+
       );
 
-      alert("🛒 Product Added To Cart");
+      alert(
+        "🛒 Product Added To Cart"
+      );
 
     }
+
+    // =========================
+    // ADD TO WISHLIST
+    // =========================
+
+    async function addToWishlist(id){
+
+      const res =
+        await fetch("/products");
+
+      const products =
+        await res.json();
+
+      const product =
+        products.find(
+
+          p => p._id === id
+
+        );
+
+      let wishlist =
+        JSON.parse(
+
+          localStorage.getItem(
+            "wishlist"
+          )
+
+        ) || [];
+
+      const exists =
+        wishlist.find(
+
+          item => item._id === id
+
+        );
+
+      if(exists){
+
+        alert(
+          "Already In Wishlist"
+        );
+
+        return;
+
+      }
+
+      wishlist.push(product);
+
+      localStorage.setItem(
+
+        "wishlist",
+
+        JSON.stringify(wishlist)
+
+      );
+
+      alert(
+        "❤️ Added To Wishlist"
+      );
+
+    }
+
+    // =========================
+    // INITIAL LOAD
+    // =========================
 
     loadProduct();
 

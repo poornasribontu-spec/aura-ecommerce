@@ -1,17 +1,29 @@
 let allProducts = [];
 
+// =========================
+// WINDOW LOAD
+// =========================
+
 window.onload = () => {
 
   fetchProducts();
 
+  updateCartCount();
+
 };
 
-async function fetchProducts() {
+// =========================
+// FETCH PRODUCTS
+// =========================
+
+async function fetchProducts(){
 
   try {
 
     const container =
-      document.getElementById("products");
+      document.getElementById(
+        "products"
+      );
 
     container.innerHTML = `
 
@@ -22,11 +34,31 @@ async function fetchProducts() {
 
     `;
 
-    const res = await fetch("/products");
+    const res =
+      await fetch("/products");
 
-    const products = await res.json();
+    const products =
+      await res.json();
 
     allProducts = products;
+
+    // EMPTY PRODUCTS
+
+    if(products.length === 0){
+
+      container.innerHTML = `
+
+        <h2 class="empty-products">
+
+          No Products Found
+
+        </h2>
+
+      `;
+
+      return;
+
+    }
 
     displayProducts(products);
 
@@ -36,22 +68,42 @@ async function fetchProducts() {
 
     console.log(error);
 
+    document.getElementById(
+      "products"
+    ).innerHTML = `
+
+      <h2 class="empty-products">
+
+        Failed To Load Products
+
+      </h2>
+
+    `;
+
   }
 
 }
 
+// =========================
+// DISPLAY PRODUCTS
+// =========================
+
 function displayProducts(products){
 
   const container =
-    document.getElementById("products");
+    document.getElementById(
+      "products"
+    );
 
   container.innerHTML = "";
 
   products.forEach(product => {
 
-    const card = document.createElement("div");
+    const card =
+      document.createElement("div");
 
-    card.className = "product fade-in";
+    card.className =
+      "product fade-in";
 
     card.innerHTML = `
 
@@ -59,13 +111,22 @@ function displayProducts(products){
         SALE
       </span>
 
-      <img src="${product.image}">
+      <img
+        src="${product.image}"
+        alt="${product.name}"
+      >
 
-      <h2>${product.name}</h2>
+      <h2>
+        ${product.name}
+      </h2>
 
-      <p>₹${product.price}</p>
+      <p>
+        ₹${product.price}
+      </p>
 
-      <p>${product.description}</p>
+      <p>
+        ${product.description}
+      </p>
 
       <button class="add-btn">
         Add To Cart
@@ -81,24 +142,39 @@ function displayProducts(products){
 
     `;
 
+    // ADD TO CART
+
     card.querySelector(".add-btn")
     .addEventListener("click", () => {
+
       addToCart(product);
+
     });
+
+    // ADD TO WISHLIST
 
     card.querySelector(".wish-btn")
     .addEventListener("click", () => {
+
       addToWishlist(product);
+
     });
+
+    // OPEN MODAL
 
     card.querySelector("img")
     .addEventListener("click", () => {
 
       openModal(
+
         product.image,
+
         product.name,
+
         product.price,
+
         product.description
+
       );
 
     });
@@ -107,17 +183,48 @@ function displayProducts(products){
 
   });
 
+  // OBSERVER ANIMATION
+
+  setTimeout(() => {
+
+    const cards =
+      document.querySelectorAll(
+        ".product"
+      );
+
+    cards.forEach(card => {
+
+      card.classList.add(
+        "hidden"
+      );
+
+      observer.observe(card);
+
+    });
+
+  }, 500);
+
 }
+
+// =========================
+// ADD TO CART
+// =========================
 
 function addToCart(product){
 
   let cart =
-    JSON.parse(localStorage.getItem("cart"))
-    || [];
+    JSON.parse(
 
-  const existingProduct = cart.find(item =>
-    item._id === product._id
-  );
+      localStorage.getItem("cart")
+
+    ) || [];
+
+  const existingProduct =
+    cart.find(item =>
+
+      item._id === product._id
+
+    );
 
   if(existingProduct){
 
@@ -125,35 +232,59 @@ function addToCart(product){
 
   } else {
 
-    product.quantity = 1;
+    cart.push({
 
-    cart.push(product);
+      ...product,
+
+      quantity: 1
+
+    });
 
   }
 
   localStorage.setItem(
+
     "cart",
+
     JSON.stringify(cart)
+
   );
 
-  showToast("🛒 Product Added To Cart");
+  showToast(
+    "🛒 Product Added To Cart"
+  );
+
   updateCartCount();
 
 }
 
+// =========================
+// ADD TO WISHLIST
+// =========================
+
 function addToWishlist(product){
 
   let wishlist =
-    JSON.parse(localStorage.getItem("wishlist"))
-    || [];
+    JSON.parse(
 
-  const exists = wishlist.find(item =>
-    item._id === product._id
-  );
+      localStorage.getItem(
+        "wishlist"
+      )
+
+    ) || [];
+
+  const exists =
+    wishlist.find(item =>
+
+      item._id === product._id
+
+    );
 
   if(exists){
 
-    alert("Already In Wishlist");
+    alert(
+      "Already In Wishlist"
+    );
 
     return;
 
@@ -162,35 +293,58 @@ function addToWishlist(product){
   wishlist.push(product);
 
   localStorage.setItem(
+
     "wishlist",
+
     JSON.stringify(wishlist)
+
   );
 
-  showToast("❤️ Added To Wishlist");
+  showToast(
+    "❤️ Added To Wishlist"
+  );
 
 }
+
+// =========================
+// TOAST
+// =========================
 
 function showToast(message){
 
   const toast =
-    document.getElementById("toast");
+    document.getElementById(
+      "toast"
+    );
 
   toast.innerText = message;
 
-  toast.classList.add("show");
+  toast.classList.add(
+    "show"
+  );
 
   setTimeout(() => {
 
-    toast.classList.remove("show");
+    toast.classList.remove(
+      "show"
+    );
 
   }, 2500);
 
 }
+
+// =========================
+// CART COUNT
+// =========================
+
 function updateCartCount(){
 
   let cart =
-    JSON.parse(localStorage.getItem("cart"))
-    || [];
+    JSON.parse(
+
+      localStorage.getItem("cart")
+
+    ) || [];
 
   let totalCount = 0;
 
@@ -201,154 +355,213 @@ function updateCartCount(){
   });
 
   const cartCount =
-    document.getElementById("cartCount");
+    document.getElementById(
+      "cartCount"
+    );
 
   if(cartCount){
 
-    cartCount.innerText = totalCount;
+    cartCount.innerText =
+      totalCount;
 
   }
 
 }
 
-document.getElementById("searchInput")
-.addEventListener("input", function(){
+// =========================
+// SEARCH PRODUCTS
+// =========================
 
-  const value = this.value.toLowerCase();
+document.getElementById(
+  "searchInput"
+).addEventListener(
 
-  const filtered = allProducts.filter(product =>
-    product.name.toLowerCase().includes(value)
-  );
+  "input",
 
-  displayProducts(filtered);
+  function(){
 
-});
+    const value =
+      this.value.toLowerCase();
 
-document.getElementById("categoryFilter")
-.addEventListener("change", function(){
+    const filtered =
+      allProducts.filter(product =>
 
-  const value = this.value;
+        product.name
+        .toLowerCase()
+        .includes(value)
 
-  if(value === "all"){
-
-    displayProducts(allProducts);
-
-  } else {
-
-    const filtered = allProducts.filter(product =>
-      product.category === value
-    );
+      );
 
     displayProducts(filtered);
 
   }
 
-});
-document.getElementById("sortFilter")
-.addEventListener("change", function(){
+);
 
-  const value = this.value;
+// =========================
+// CATEGORY FILTER
+// =========================
 
-  let sortedProducts = [...allProducts];
+document.getElementById(
+  "categoryFilter"
+).addEventListener(
 
-  if(value === "low"){
+  "change",
 
-    sortedProducts.sort(
-      (a, b) => a.price - b.price
+  function(){
+
+    const value =
+      this.value;
+
+    if(value === "all"){
+
+      displayProducts(allProducts);
+
+    }
+
+    else {
+
+      const filtered =
+        allProducts.filter(product =>
+
+          product.category === value
+
+        );
+
+      displayProducts(filtered);
+
+    }
+
+  }
+
+);
+
+// =========================
+// SORT FILTER
+// =========================
+
+document.getElementById(
+  "sortFilter"
+).addEventListener(
+
+  "change",
+
+  function(){
+
+    const value =
+      this.value;
+
+    let sortedProducts =
+      [...allProducts];
+
+    if(value === "low"){
+
+      sortedProducts.sort(
+
+        (a, b) =>
+          a.price - b.price
+
+      );
+
+    }
+
+    else if(value === "high"){
+
+      sortedProducts.sort(
+
+        (a, b) =>
+          b.price - a.price
+
+      );
+
+    }
+
+    displayProducts(
+      sortedProducts
     );
 
   }
 
-  else if(value === "high"){
+);
 
-    sortedProducts.sort(
-      (a, b) => b.price - a.price
-    );
-
-  }
-
-  displayProducts(sortedProducts);
-
-});
-document.getElementById("sortFilter")
-.addEventListener("change", function(){
-
-  const value = this.value;
-
-  let sortedProducts = [...allProducts];
-
-  if(value === "low"){
-
-    sortedProducts.sort(
-      (a, b) => a.price - b.price
-    );
-
-  }
-
-  else if(value === "high"){
-
-    sortedProducts.sort(
-      (a, b) => b.price - a.price
-    );
-
-  }
-
-  displayProducts(sortedProducts);
-
-});
+// =========================
+// LOGOUT
+// =========================
 
 function logout(){
 
-  localStorage.removeItem("loggedInUser");
-
-  alert("Logged Out");
-
-  window.location.href = "/login.html";
-
-}
-
-function rateProduct(productId, rating){
-
-  let ratings =
-    JSON.parse(localStorage.getItem("ratings"))
-    || {};
-
-  ratings[productId] = rating;
-
-  localStorage.setItem(
-    "ratings",
-    JSON.stringify(ratings)
+  localStorage.removeItem(
+    "loggedInUser"
   );
 
-  alert("Rated " + rating + " Stars");
+  alert(
+    "Logged Out Successfully"
+  );
+
+  window.location.href =
+    "/login.html";
 
 }
+
+// =========================
+// DARK MODE
+// =========================
 
 function toggleDarkMode(){
 
-  document.body.classList.toggle("dark-mode");
+  document.body.classList.toggle(
+    "dark-mode"
+  );
 
-  if(document.body.classList.contains("dark-mode")){
+  if(
+    document.body.classList.contains(
+      "dark-mode"
+    )
+  ){
 
-    localStorage.setItem("theme", "dark");
+    localStorage.setItem(
+      "theme",
+      "dark"
+    );
 
-  } else {
+  }
 
-    localStorage.setItem("theme", "light");
+  else {
+
+    localStorage.setItem(
+      "theme",
+      "light"
+    );
 
   }
 
 }
 
+// LOAD SAVED THEME
+
 const savedTheme =
-  localStorage.getItem("theme");
+  localStorage.getItem(
+    "theme"
+  );
 
 if(savedTheme === "dark"){
 
-  document.body.classList.add("dark-mode");
+  document.body.classList.add(
+    "dark-mode"
+  );
 
 }
-function openModal(image, name, price, description){
+
+// =========================
+// OPEN MODAL
+// =========================
+
+function openModal(
+  image,
+  name,
+  price,
+  description
+){
 
   document.getElementById(
     "productModal"
@@ -364,32 +577,56 @@ function openModal(image, name, price, description){
 
   document.getElementById(
     "modalPrice"
-  ).innerText = "₹" + price;
+  ).innerText =
+    "₹" + price;
 
   document.getElementById(
     "modalDesc"
-  ).innerText = description;
+  ).innerText =
+    description;
+
+  // LOAD REVIEWS
+
+  loadReviews(name);
 
 }
+
+// =========================
+// CLOSE MODAL
+// =========================
 
 function closeModal(){
 
-  document.getElementById("productModal").style.display = "none";
+  document.getElementById(
+    "productModal"
+  ).style.display = "none";
 
 }
+
+// =========================
+// REVIEWS
+// =========================
 
 let currentProduct = "";
 
 function addReview(){
 
   const reviewText =
-    document.getElementById("reviewInput").value;
+    document.getElementById(
+      "reviewInput"
+    ).value;
 
-  if(reviewText === "") return;
+  if(reviewText.trim() === "")
+    return;
 
   let reviews =
-    JSON.parse(localStorage.getItem("reviews"))
-    || {};
+    JSON.parse(
+
+      localStorage.getItem(
+        "reviews"
+      )
+
+    ) || {};
 
   if(!reviews[currentProduct]){
 
@@ -397,40 +634,59 @@ function addReview(){
 
   }
 
-  reviews[currentProduct].push(reviewText);
+  reviews[currentProduct]
+  .push(reviewText);
 
   localStorage.setItem(
+
     "reviews",
+
     JSON.stringify(reviews)
+
   );
 
   loadReviews(currentProduct);
 
-  document.getElementById("reviewInput").value = "";
+  document.getElementById(
+    "reviewInput"
+  ).value = "";
 
 }
 
 function loadReviews(productName){
 
-  currentProduct = productName;
+  currentProduct =
+    productName;
 
   let reviews =
-    JSON.parse(localStorage.getItem("reviews"))
-    || {};
+    JSON.parse(
+
+      localStorage.getItem(
+        "reviews"
+      )
+
+    ) || {};
 
   const reviewsList =
-    document.getElementById("reviewsList");
+    document.getElementById(
+      "reviewsList"
+    );
 
   reviewsList.innerHTML = "";
 
   if(reviews[productName]){
 
-    reviews[productName].forEach(review => {
+    reviews[productName]
+    .forEach(review => {
 
       reviewsList.innerHTML += `
+
         <div class="review-item">
+
           ⭐ ${review}
+
         </div>
+
       `;
 
     });
@@ -438,42 +694,41 @@ function loadReviews(productName){
   }
 
 }
-updateCartCount();
-const observer = new IntersectionObserver(entries => {
 
-  entries.forEach(entry => {
+// =========================
+// ANIMATION OBSERVER
+// =========================
 
-    if(entry.isIntersecting){
+const observer =
+  new IntersectionObserver(entries => {
 
-      entry.target.classList.add(
-        "show-animation"
-      );
+    entries.forEach(entry => {
 
-    }
+      if(entry.isIntersecting){
 
-  });
+        entry.target.classList.add(
+          "show-animation"
+        );
 
-});
+      }
 
-setTimeout(() => {
-
-  const cards =
-    document.querySelectorAll(".product");
-
-  cards.forEach(card => {
-
-    card.classList.add("hidden");
-
-    observer.observe(card);
+    });
 
   });
 
-}, 1000);
+// =========================
+// MOBILE MENU
+// =========================
+
 function toggleMenu(){
 
   const navbar =
-    document.querySelector(".navbar");
+    document.querySelector(
+      ".navbar"
+    );
 
-  navbar.classList.toggle("active-menu");
+  navbar.classList.toggle(
+    "active-menu"
+  );
 
 }

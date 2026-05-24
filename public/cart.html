@@ -3,7 +3,7 @@
 
 <head>
 
-  <title>Cart</title>
+  <title>Aura Cart</title>
 
   <link rel="stylesheet" href="style.css">
 
@@ -57,9 +57,15 @@
 
   <!-- CHECKOUT BUTTON -->
 
-  <div class="cart-page-btn">
+  <div
+    class="cart-page-btn"
+    id="checkoutContainer"
+  >
 
-    <button class="cart-btn" onclick="checkout()">
+    <button
+      class="cart-btn"
+      onclick="checkout()"
+    >
       Checkout
     </button>
 
@@ -68,13 +74,33 @@
   <script>
 
     let cart =
-      JSON.parse(localStorage.getItem("cart"))
-      || [];
+      JSON.parse(
+        localStorage.getItem("cart")
+      ) || [];
 
     let container =
-      document.getElementById("cartItems");
+      document.getElementById(
+        "cartItems"
+      );
 
     let total = 0;
+
+    // =========================
+    // SAVE CART
+    // =========================
+
+    function saveCart(){
+
+      localStorage.setItem(
+        "cart",
+        JSON.stringify(cart)
+      );
+
+    }
+
+    // =========================
+    // DISPLAY CART
+    // =========================
 
     function displayCart(){
 
@@ -86,6 +112,28 @@
         "emptyCart"
       ).style.display = "none";
 
+      document.getElementById(
+        "checkoutContainer"
+      ).style.display = "block";
+
+      if(cart.length === 0){
+
+        document.getElementById(
+          "emptyCart"
+        ).style.display = "block";
+
+        document.getElementById(
+          "total"
+        ).innerText = "";
+
+        document.getElementById(
+          "checkoutContainer"
+        ).style.display = "none";
+
+        return;
+
+      }
+
       cart.forEach((product, index) => {
 
         total +=
@@ -95,9 +143,14 @@
 
           <div class="cart-product">
 
-            <img src="${product.image}">
+            <img
+              src="${product.image}"
+              alt="${product.name}"
+            >
 
-            <h2>${product.name}</h2>
+            <h2>
+              ${product.name}
+            </h2>
 
             <p>
               ₹${product.price}
@@ -111,7 +164,9 @@
 
             <div class="qty-controls">
 
-              <button onclick="decreaseQty(${index})">
+              <button
+                onclick="decreaseQty(${index})"
+              >
                 -
               </button>
 
@@ -119,13 +174,17 @@
                 ${product.quantity}
               </span>
 
-              <button onclick="increaseQty(${index})">
+              <button
+                onclick="increaseQty(${index})"
+              >
                 +
               </button>
 
             </div>
 
-            <button onclick="removeItem(${index})">
+            <button
+              onclick="removeItem(${index})"
+            >
               Remove
             </button>
 
@@ -135,45 +194,44 @@
 
       });
 
-      document.getElementById("total")
-      .innerText =
+      document.getElementById(
+        "total"
+      ).innerText =
         "Total: ₹" + total;
 
-      if(cart.length === 0){
-
-        document.getElementById(
-          "emptyCart"
-        ).style.display = "block";
-
-      }
-
     }
+
+    // =========================
+    // REMOVE ITEM
+    // =========================
 
     function removeItem(index){
 
       cart.splice(index, 1);
 
-      localStorage.setItem(
-        "cart",
-        JSON.stringify(cart)
-      );
+      saveCart();
 
       displayCart();
 
     }
+
+    // =========================
+    // INCREASE QUANTITY
+    // =========================
 
     function increaseQty(index){
 
       cart[index].quantity += 1;
 
-      localStorage.setItem(
-        "cart",
-        JSON.stringify(cart)
-      );
+      saveCart();
 
       displayCart();
 
     }
+
+    // =========================
+    // DECREASE QUANTITY
+    // =========================
 
     function decreaseQty(index){
 
@@ -187,29 +245,34 @@
 
       }
 
-      localStorage.setItem(
-        "cart",
-        JSON.stringify(cart)
-      );
+      saveCart();
 
       displayCart();
 
     }
 
-    async function checkout(){
+    // =========================
+    // CHECKOUT
+    // =========================
 
-  if(cart.length === 0){
+    function checkout(){
 
-    alert("Cart Is Empty");
+      if(cart.length === 0){
 
-    return;
+        alert("Cart Is Empty");
 
-  }
+        return;
 
-  window.location.href =
-    "/checkout.html";
+      }
 
-}
+      window.location.href =
+        "/checkout.html";
+
+    }
+
+    // =========================
+    // INITIAL LOAD
+    // =========================
 
     displayCart();
 

@@ -3,7 +3,7 @@
 
 <head>
 
-  <title>Admin Dashboard</title>
+  <title>Aura Admin Dashboard</title>
 
   <link rel="stylesheet" href="style.css">
 
@@ -14,7 +14,7 @@
   <div class="navbar">
 
     <h1>
-      Admin Dashboard
+      Aura Admin Dashboard
     </h1>
 
     <a href="/">
@@ -88,197 +88,262 @@
 
   <script>
 
+    // =========================
     // LOAD PRODUCTS
+    // =========================
 
     async function loadProducts(){
 
-      const res =
-        await fetch("/products");
+      try {
 
-      const products =
-        await res.json();
+        const res =
+          await fetch("/products");
 
-      const container =
-        document.getElementById(
-          "adminProducts"
-        );
+        const products =
+          await res.json();
 
-      container.innerHTML = "";
+        const container =
+          document.getElementById(
+            "adminProducts"
+          );
 
-      products.forEach(product => {
+        container.innerHTML = "";
 
-        container.innerHTML += `
+        if(products.length === 0){
 
-          <div class="cart-product">
+          container.innerHTML =
+            "<p>No Products Found</p>";
 
-            <img src="${product.image}">
+          return;
 
-            <h2>
-              ${product.name}
-            </h2>
+        }
 
-            <p>
-              ₹${product.price}
-            </p>
+        products.forEach(product => {
 
-            <p>
-              ${product.category}
-            </p>
+          container.innerHTML += `
 
-            <button
-              onclick="deleteProduct('${product._id}')"
-            >
-              Delete
-            </button>
+            <div class="cart-product">
 
-            <button
-              onclick="editProduct(
-                '${product._id}',
-                '${product.name}',
-                '${product.price}',
-                '${product.image}',
-                '${product.category}',
-                '${product.description}'
-              )"
-            >
-              Edit
-            </button>
+              <img
+                src="${product.image}"
+                alt="${product.name}"
+              >
 
-          </div>
+              <h2>
+                ${product.name}
+              </h2>
 
-        `;
+              <p>
+                ₹${product.price}
+              </p>
 
-      });
+              <p>
+                ${product.category}
+              </p>
+
+              <button
+                onclick="deleteProduct('${product._id}')"
+              >
+                Delete
+              </button>
+
+              <button
+                onclick='editProduct(
+                  "${product._id}",
+                  "${product.name}",
+                  "${product.price}",
+                  "${product.image}",
+                  "${product.category}",
+                  `${product.description}`
+                )'
+              >
+                Edit
+              </button>
+
+            </div>
+
+          `;
+
+        });
+
+      } catch(error){
+
+        console.log(error);
+
+      }
 
     }
 
+    // =========================
     // LOAD ORDERS
+    // =========================
 
     async function loadOrders(){
 
-      const res =
-        await fetch("/orders");
+      try {
 
-      const orders =
-        await res.json();
+        const res =
+          await fetch("/orders");
 
-      const container =
-        document.getElementById(
-          "ordersContainer"
-        );
+        const orders =
+          await res.json();
 
-      container.innerHTML = "";
+        const container =
+          document.getElementById(
+            "ordersContainer"
+          );
 
-      orders.forEach(order => {
+        container.innerHTML = "";
 
-        container.innerHTML += `
+        if(orders.length === 0){
 
-          <div class="cart-product">
+          container.innerHTML =
+            "<p>No Orders Found</p>";
 
-            <h2>
-              Order Details
-            </h2>
+          return;
 
-            <p>
-              User:
-              ${order.user}
-            </p>
+        }
 
-            <p>
-              Phone:
-              ${order.phone}
-            </p>
+        orders.forEach(order => {
 
-            <p>
-              Address:
-              ${order.address}
-            </p>
+          container.innerHTML += `
 
-            <p>
-              Payment:
-              ${order.paymentMethod}
-            </p>
+            <div class="cart-product">
 
-            <p>
-              Total:
-              ₹${order.totalAmount}
-            </p>
+              <h2>
+                Order Details
+              </h2>
 
-            <p>
-              Products:
-              ${order.products.length}
-            </p>
+              <p>
+                User:
+                ${order.user}
+              </p>
 
-          </div>
+              <p>
+                Phone:
+                ${order.phone}
+              </p>
 
-        `;
+              <p>
+                Address:
+                ${order.address}
+              </p>
 
-      });
+              <p>
+                Payment:
+                ${order.paymentMethod}
+              </p>
+
+              <p>
+                Total:
+                ₹${order.totalAmount}
+              </p>
+
+              <p>
+                Products:
+                ${order.products.length}
+              </p>
+
+            </div>
+
+          `;
+
+        });
+
+      } catch(error){
+
+        console.log(error);
+
+      }
 
     }
 
+    // =========================
     // DELETE PRODUCT
+    // =========================
 
     async function deleteProduct(id){
 
-      await fetch(
+      try {
 
-        "/delete-product/" + id,
+        await fetch(
 
-        {
-          method: "DELETE"
-        }
+          "/delete-product/" + id,
 
-      );
+          {
+            method: "DELETE"
+          }
 
-      alert("Product Deleted");
+        );
 
-      loadProducts();
+        alert("Product Deleted");
+
+        loadProducts();
+
+      } catch(error){
+
+        console.log(error);
+
+      }
 
     }
 
+    // =========================
     // ADD PRODUCT
+    // =========================
 
     async function addProduct(){
 
-      const product = {
+      try {
 
-        name:
-          document.getElementById("name").value,
+        const product = {
 
-        price:
-          document.getElementById("price").value,
+          name:
+            document.getElementById("name").value,
 
-        image:
-          document.getElementById("image").value,
+          price:
+            document.getElementById("price").value,
 
-        category:
-          document.getElementById("category").value,
+          image:
+            document.getElementById("image").value,
 
-        description:
-          document.getElementById("description").value
+          category:
+            document.getElementById("category").value,
 
-      };
+          description:
+            document.getElementById("description").value
 
-      await fetch("/add-product-admin", {
+        };
 
-        method: "POST",
+        await fetch("/add-product-admin", {
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+          method: "POST",
 
-        body: JSON.stringify(product)
+          headers: {
+            "Content-Type": "application/json"
+          },
 
-      });
+          body: JSON.stringify(product)
 
-      alert("Product Added");
+        });
 
-      location.reload();
+        alert("Product Added");
+
+        clearForm();
+
+        loadProducts();
+
+      } catch(error){
+
+        console.log(error);
+
+      }
 
     }
 
+    // =========================
     // EDIT PRODUCT
+    // =========================
 
     function editProduct(
       id,
@@ -318,54 +383,96 @@
 
     }
 
+    // =========================
     // UPDATE PRODUCT
+    // =========================
 
     async function updateProduct(id){
 
-      const updatedProduct = {
+      try {
 
-        name:
-          document.getElementById("name").value,
+        const updatedProduct = {
 
-        price:
-          document.getElementById("price").value,
+          name:
+            document.getElementById("name").value,
 
-        image:
-          document.getElementById("image").value,
+          price:
+            document.getElementById("price").value,
 
-        category:
-          document.getElementById("category").value,
+          image:
+            document.getElementById("image").value,
 
-        description:
-          document.getElementById("description").value
+          category:
+            document.getElementById("category").value,
 
-      };
+          description:
+            document.getElementById("description").value
 
-      await fetch(
+        };
 
-        "/update-product/" + id,
+        await fetch(
 
-        {
+          "/update-product/" + id,
 
-          method: "PUT",
+          {
 
-          headers: {
-            "Content-Type": "application/json"
-          },
+            method: "PUT",
 
-          body: JSON.stringify(updatedProduct)
+            headers: {
+              "Content-Type": "application/json"
+            },
 
-        }
+            body: JSON.stringify(updatedProduct)
 
-      );
+          }
 
-      alert("Product Updated");
+        );
 
-      location.reload();
+        alert("Product Updated");
+
+        clearForm();
+
+        loadProducts();
+
+        const button =
+          document.getElementById(
+            "mainButton"
+          );
+
+        button.innerText =
+          "Add Product";
+
+        button.onclick = addProduct;
+
+      } catch(error){
+
+        console.log(error);
+
+      }
 
     }
 
+    // =========================
+    // CLEAR FORM
+    // =========================
+
+    function clearForm(){
+
+      document.getElementById("name").value = "";
+
+      document.getElementById("price").value = "";
+
+      document.getElementById("image").value = "";
+
+      document.getElementById("category").value = "";
+
+      document.getElementById("description").value = "";
+
+    }
+
+    // =========================
     // INITIAL LOAD
+    // =========================
 
     loadProducts();
 

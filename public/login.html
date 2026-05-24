@@ -2,64 +2,211 @@
 <html>
 
 <head>
-  <title>Login</title>
+
+  <title>Aura Login</title>
+
   <link rel="stylesheet" href="style.css">
+
 </head>
 
 <body>
 
-  <div class="product">
+  <div class="product login-container">
 
-   <h1>🛍 Velvora Login</h1>
+    <h1>
+      🛍 Aura Login
+    </h1>
 
-    <input type="email" id="email" placeholder="Email">
+    <p>
+      Welcome back to Aura
+    </p>
+
+    <!-- EMAIL -->
+
+    <input
+      type="email"
+      id="email"
+      placeholder="Enter Email"
+    >
+
     <br><br>
 
-    <input type="password" id="password" placeholder="Password">
+    <!-- PASSWORD -->
+
+    <input
+      type="password"
+      id="password"
+      placeholder="Enter Password"
+    >
+
     <br><br>
 
-    <button onclick="loginUser()">
+    <!-- LOGIN BUTTON -->
+
+    <button
+      id="loginBtn"
+      onclick="loginUser()"
+    >
       Login
     </button>
+
+    <br><br>
+
+    <!-- REGISTER -->
+
+    <p>
+
+      Don't have an account?
+
+      <a href="/register.html">
+        Register
+      </a>
+
+    </p>
 
   </div>
 
   <script>
 
+    // =========================
+    // REDIRECT IF LOGGED IN
+    // =========================
+
+    if(
+      localStorage.getItem(
+        "loggedInUser"
+      )
+    ){
+
+      window.location.href = "/";
+
+    }
+
+    // =========================
+    // ENTER KEY LOGIN
+    // =========================
+
+    document.addEventListener(
+
+      "keypress",
+
+      function(event){
+
+        if(event.key === "Enter"){
+
+          loginUser();
+
+        }
+
+      }
+
+    );
+
+    // =========================
+    // LOGIN USER
+    // =========================
+
     async function loginUser(){
 
-      const email =
-        document.getElementById("email").value;
+      try {
 
-      const password =
-        document.getElementById("password").value;
+        const email =
+          document.getElementById(
+            "email"
+          ).value.trim();
 
-      const res = await fetch("/login", {
+        const password =
+          document.getElementById(
+            "password"
+          ).value.trim();
 
-        method: "POST",
+        // VALIDATION
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+        if(
+          !email ||
+          !password
+        ){
 
-        body: JSON.stringify({
-          email,
-          password
-        })
+          alert(
+            "Please Fill All Fields"
+          );
 
-      });
+          return;
 
-      const data = await res.json();
+        }
 
-      alert(data.message);
+        // BUTTON LOADING
 
-if(data.message === "Login Successful"){
+        const loginBtn =
+          document.getElementById(
+            "loginBtn"
+          );
 
-  localStorage.setItem("loggedInUser", email);
+        loginBtn.disabled = true;
 
-  window.location.href = "/";
+        loginBtn.innerText =
+          "Logging In...";
 
-}
+        // API CALL
+
+        const res =
+          await fetch("/login", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+              email,
+              password
+            })
+
+          });
+
+        const data =
+          await res.json();
+
+        alert(data.message);
+
+        // SUCCESS LOGIN
+
+        if(
+          data.message ===
+          "Login Successful"
+        ){
+
+          localStorage.setItem(
+
+            "loggedInUser",
+
+            email
+
+          );
+
+          window.location.href =
+            "/";
+
+        }
+
+        // RESET BUTTON
+
+        loginBtn.disabled = false;
+
+        loginBtn.innerText =
+          "Login";
+
+      } catch(error){
+
+        console.log(error);
+
+        alert(
+          "Login Failed"
+        );
+
+      }
 
     }
 

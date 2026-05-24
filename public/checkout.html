@@ -3,7 +3,7 @@
 
 <head>
 
-  <title>Checkout</title>
+  <title>Aura Checkout</title>
 
   <link rel="stylesheet" href="style.css">
 
@@ -72,6 +72,7 @@
 
       <button
         class="cart-btn"
+        id="payButton"
         onclick="makePayment()"
       >
         Pay Now
@@ -83,11 +84,34 @@
 
   <script>
 
+    // =========================
+    // CART DATA
+    // =========================
+
     let cart =
-      JSON.parse(localStorage.getItem("cart"))
-      || [];
+      JSON.parse(
+        localStorage.getItem("cart")
+      ) || [];
 
     let total = 0;
+
+    // =========================
+    // EMPTY CART CHECK
+    // =========================
+
+    if(cart.length === 0){
+
+      alert(
+        "Your Cart Is Empty"
+      );
+
+      window.location.href = "/";
+
+    }
+
+    // =========================
+    // TOTAL CALCULATION
+    // =========================
 
     cart.forEach(product => {
 
@@ -101,95 +125,141 @@
     ).innerText =
       "Total Amount: ₹" + total;
 
+    // =========================
+    // MAKE PAYMENT
+    // =========================
+
     async function makePayment(){
 
-      // GET INPUT VALUES
+      try {
 
-      const name =
-        document.getElementById(
-          "customerName"
-        ).value.trim();
+        // GET INPUT VALUES
 
-      const phone =
-        document.getElementById(
-          "customerPhone"
-        ).value.trim();
+        const name =
+          document.getElementById(
+            "customerName"
+          ).value.trim();
 
-      const address =
-        document.getElementById(
-          "customerAddress"
-        ).value.trim();
+        const phone =
+          document.getElementById(
+            "customerPhone"
+          ).value.trim();
 
-      const payment =
-        document.getElementById(
-          "paymentMethod"
-        ).value;
+        const address =
+          document.getElementById(
+            "customerAddress"
+          ).value.trim();
 
-      // VALIDATION
+        const payment =
+          document.getElementById(
+            "paymentMethod"
+          ).value;
 
-      if(
-        !name ||
-        !phone ||
-        !address ||
-        !payment
-      ){
+        // VALIDATION
+
+        if(
+          !name ||
+          !phone ||
+          !address ||
+          !payment
+        ){
+
+          alert(
+            "Please Fill All Details"
+          );
+
+          return;
+
+        }
+
+        // PHONE VALIDATION
+
+        const phoneRegex =
+          /^[0-9]{10}$/;
+
+        if(
+          !phoneRegex.test(phone)
+        ){
+
+          alert(
+            "Enter Valid 10 Digit Phone Number"
+          );
+
+          return;
+
+        }
+
+        // DISABLE BUTTON
+
+        const payButton =
+          document.getElementById(
+            "payButton"
+          );
+
+        payButton.disabled = true;
+
+        payButton.innerText =
+          "Processing...";
+
+        // SAVE ORDER
+
+        const res =
+          await fetch("/place-order", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+
+              products: cart,
+
+              totalAmount: total,
+
+              user: name,
+
+              phone: phone,
+
+              address: address,
+
+              paymentMethod: payment
+
+            })
+
+          });
+
+        const data =
+          await res.json();
+
+        // SUCCESS
 
         alert(
-          "Please Fill All Details"
+          data.message
         );
 
-        return;
+        // CLEAR CART
 
-      }
+        localStorage.removeItem(
+          "cart"
+        );
 
-      // PHONE VALIDATION
+        // REDIRECT
 
-      if(phone.length !== 10){
+        window.location.href =
+          "/success.html";
+
+      } catch(error){
+
+        console.log(error);
 
         alert(
-          "Enter Valid 10 Digit Phone Number"
+          "Payment Failed"
         );
 
-        return;
-
       }
-
-      // SAVE ORDER
-
-      await fetch("/place-order", {
-
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-
-          products: cart,
-
-          totalAmount: total,
-
-          user: name,
-
-          phone: phone,
-
-          address: address,
-
-          paymentMethod: payment
-
-        })
-
-      });
-
-      // CLEAR CART
-
-      localStorage.removeItem("cart");
-
-      // REDIRECT
-
-      window.location.href =
-        "/success.html";
 
     }
 
