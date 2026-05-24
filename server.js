@@ -1,9 +1,10 @@
-require('dns').setDefaultResultOrder('ipv4first');
+require("dns").setDefaultResultOrder("ipv4first");
 
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
+const path = require("path");
 
 require("dotenv").config();
 
@@ -21,46 +22,96 @@ app.use(cors());
 
 app.use(express.json());
 
-app.use(express.static("public"));
+app.use(express.urlencoded({ extended: true }));
+
+// ============================
+// STATIC FILES
+// ============================
+
+app.use(express.static(path.join(__dirname, "public")));
 
 // ============================
 // HTML ROUTES
 // ============================
 
 app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/public/index.html");
+
+  res.sendFile(
+    path.join(__dirname, "public", "index.html")
+  );
+
 });
 
-app.get("/admin", (req, res) => {
-  res.sendFile(__dirname + "/public/admin.html");
+app.get("/admin.html", (req, res) => {
+
+  res.sendFile(
+    path.join(__dirname, "public", "admin.html")
+  );
+
 });
 
-app.get("/cart", (req, res) => {
-  res.sendFile(__dirname + "/public/cart.html");
+app.get("/cart.html", (req, res) => {
+
+  res.sendFile(
+    path.join(__dirname, "public", "cart.html")
+  );
+
 });
 
-app.get("/login", (req, res) => {
-  res.sendFile(__dirname + "/public/login.html");
+app.get("/login.html", (req, res) => {
+
+  res.sendFile(
+    path.join(__dirname, "public", "login.html")
+  );
+
 });
 
-app.get("/register", (req, res) => {
-  res.sendFile(__dirname + "/public/register.html");
+app.get("/register.html", (req, res) => {
+
+  res.sendFile(
+    path.join(__dirname, "public", "register.html")
+  );
+
 });
 
-app.get("/checkout", (req, res) => {
-  res.sendFile(__dirname + "/public/checkout.html");
+app.get("/checkout.html", (req, res) => {
+
+  res.sendFile(
+    path.join(__dirname, "public", "checkout.html")
+  );
+
 });
 
-app.get("/orders-page", (req, res) => {
-  res.sendFile(__dirname + "/public/orders.html");
+app.get("/orders.html", (req, res) => {
+
+  res.sendFile(
+    path.join(__dirname, "public", "orders.html")
+  );
+
 });
 
-app.get("/wishlist", (req, res) => {
-  res.sendFile(__dirname + "/public/wishlist.html");
+app.get("/wishlist.html", (req, res) => {
+
+  res.sendFile(
+    path.join(__dirname, "public", "wishlist.html")
+  );
+
 });
 
-app.get("/success", (req, res) => {
-  res.sendFile(__dirname + "/public/success.html");
+app.get("/success.html", (req, res) => {
+
+  res.sendFile(
+    path.join(__dirname, "public", "success.html")
+  );
+
+});
+
+app.get("/product.html", (req, res) => {
+
+  res.sendFile(
+    path.join(__dirname, "public", "product.html")
+  );
+
 });
 
 // ============================
@@ -87,60 +138,68 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.get("/add-product", async (req, res) => {
 
-  await Product.deleteMany({});
+  try {
 
-  const products = [
+    await Product.deleteMany({});
 
-    {
-      name: "Headphones",
-      price: 1999,
-      image:
-        "https://m.media-amazon.com/images/I/61CGHv6kmWL.jpg",
-      description: "Wireless headphones",
-      category: "electronics"
-    },
+    const products = [
 
-    {
-      name: "Smart Watch",
-      price: 2999,
-      image:
-        "https://m.media-amazon.com/images/I/61ZjlBOp+rL.jpg",
-      description: "Modern smartwatch",
-      category: "electronics"
-    },
+      {
+        name: "Headphones",
+        price: 1999,
+        image:
+          "https://m.media-amazon.com/images/I/61CGHv6kmWL.jpg",
+        description: "Wireless headphones",
+        category: "electronics"
+      },
 
-    {
-      name: "Shoes",
-      price: 1499,
-      image:
-        "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop",
-      description: "Running shoes",
-      category: "fashion"
-    },
+      {
+        name: "Smart Watch",
+        price: 2999,
+        image:
+          "https://m.media-amazon.com/images/I/61ZjlBOp+rL.jpg",
+        description: "Modern smartwatch",
+        category: "electronics"
+      },
 
-    {
-      name: "Laptop",
-      price: 55999,
-      image:
-        "https://m.media-amazon.com/images/I/71TPda7cwUL.jpg",
-      description: "Powerful laptop",
-      category: "electronics"
-    },
+      {
+        name: "Shoes",
+        price: 1499,
+        image:
+          "https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=1000&auto=format&fit=crop",
+        description: "Running shoes",
+        category: "fashion"
+      },
 
-    {
-      name: "Backpack",
-      price: 999,
-      image:
-        "https://images.unsplash.com/photo-1581605405669-fcdf81165afa?q=80&w=1000&auto=format&fit=crop",
-      description: "Stylish backpack",
-      category: "fashion"
-    }
+      {
+        name: "Laptop",
+        price: 55999,
+        image:
+          "https://m.media-amazon.com/images/I/71TPda7cwUL.jpg",
+        description: "Powerful laptop",
+        category: "electronics"
+      },
 
-  ];
+      {
+        name: "Backpack",
+        price: 999,
+        image:
+          "https://images.unsplash.com/photo-1581605405669-fcdf81165afa?q=80&w=1000&auto=format&fit=crop",
+        description: "Stylish backpack",
+        category: "fashion"
+      }
 
-  await Product.insertMany(products);
+    ];
 
-  res.send("Products Reset Successfully");
+    await Product.insertMany(products);
+
+    res.send("Products Reset Successfully");
+
+  } catch (error) {
+
+    res.status(500).send("Failed To Add Products");
+
+  }
 
 });
 
@@ -150,9 +209,19 @@ app.get("/add-product", async (req, res) => {
 
 app.get("/products", async (req, res) => {
 
-  const products = await Product.find();
+  try {
 
-  res.json(products);
+    const products = await Product.find();
+
+    res.json(products);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Failed To Fetch Products"
+    });
+
+  }
 
 });
 
@@ -176,8 +245,7 @@ app.post("/register", async (req, res) => {
     if(existingUser){
 
       return res.json({
-        message:
-          "User Already Exists"
+        message: "User Already Exists"
       });
 
     }
@@ -188,9 +256,7 @@ app.post("/register", async (req, res) => {
     const user = new User({
 
       username,
-
       email,
-
       password: hashedPassword
 
     });
@@ -198,15 +264,13 @@ app.post("/register", async (req, res) => {
     await user.save();
 
     res.json({
-      message:
-        "User Registered Successfully"
+      message: "User Registered Successfully"
     });
 
   } catch(error){
 
-    res.json({
-      message:
-        "Registration Failed"
+    res.status(500).json({
+      message: "Registration Failed"
     });
 
   }
@@ -232,8 +296,7 @@ app.post("/login", async (req, res) => {
     if(!user){
 
       return res.json({
-        message:
-          "Invalid Credentials"
+        message: "Invalid Credentials"
       });
 
     }
@@ -248,28 +311,24 @@ app.post("/login", async (req, res) => {
 
       res.json({
 
-        message:
-          "Login Successful",
+        message: "Login Successful",
 
-        username:
-          user.username
+        username: user.username
 
       });
 
     } else {
 
       res.json({
-        message:
-          "Invalid Credentials"
+        message: "Invalid Credentials"
       });
 
     }
 
   } catch(error){
 
-    res.json({
-      message:
-        "Login Failed"
+    res.status(500).json({
+      message: "Login Failed"
     });
 
   }
@@ -287,15 +346,10 @@ app.post("/place-order", async (req, res) => {
     const {
 
       products,
-
       totalAmount,
-
       user,
-
       phone,
-
       address,
-
       paymentMethod
 
     } = req.body;
@@ -303,15 +357,10 @@ app.post("/place-order", async (req, res) => {
     const order = new Order({
 
       products,
-
       totalAmount,
-
       user,
-
       phone,
-
       address,
-
       paymentMethod
 
     });
@@ -319,15 +368,13 @@ app.post("/place-order", async (req, res) => {
     await order.save();
 
     res.json({
-      message:
-        "Order Placed Successfully"
+      message: "Order Placed Successfully"
     });
 
   } catch(error){
 
-    res.json({
-      message:
-        "Order Failed"
+    res.status(500).json({
+      message: "Order Failed"
     });
 
   }
@@ -340,10 +387,19 @@ app.post("/place-order", async (req, res) => {
 
 app.get("/orders", async (req, res) => {
 
-  const orders =
-    await Order.find();
+  try {
 
-  res.json(orders);
+    const orders = await Order.find();
+
+    res.json(orders);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Failed To Fetch Orders"
+    });
+
+  }
 
 });
 
@@ -353,15 +409,24 @@ app.get("/orders", async (req, res) => {
 
 app.post("/add-product-admin", async (req, res) => {
 
-  const product =
-    new Product(req.body);
+  try {
 
-  await product.save();
+    const product =
+      new Product(req.body);
 
-  res.json({
-    message:
-      "Product Added"
-  });
+    await product.save();
+
+    res.json({
+      message: "Product Added"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Failed To Add Product"
+    });
+
+  }
 
 });
 
@@ -371,14 +436,23 @@ app.post("/add-product-admin", async (req, res) => {
 
 app.delete("/delete-product/:id", async (req, res) => {
 
-  await Product.findByIdAndDelete(
-    req.params.id
-  );
+  try {
 
-  res.json({
-    message:
-      "Product Deleted"
-  });
+    await Product.findByIdAndDelete(
+      req.params.id
+    );
+
+    res.json({
+      message: "Product Deleted"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Delete Failed"
+    });
+
+  }
 
 });
 
@@ -388,18 +462,26 @@ app.delete("/delete-product/:id", async (req, res) => {
 
 app.put("/update-product/:id", async (req, res) => {
 
-  await Product.findByIdAndUpdate(
+  try {
 
-    req.params.id,
+    await Product.findByIdAndUpdate(
 
-    req.body
+      req.params.id,
+      req.body
 
-  );
+    );
 
-  res.json({
-    message:
-      "Product Updated"
-  });
+    res.json({
+      message: "Product Updated"
+    });
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Update Failed"
+    });
+
+  }
 
 });
 
@@ -409,23 +491,32 @@ app.put("/update-product/:id", async (req, res) => {
 
 app.get("/search", async (req, res) => {
 
-  const keyword =
-    req.query.keyword;
+  try {
 
-  const products =
-    await Product.find({
+    const keyword =
+      req.query.keyword;
 
-      name: {
+    const products =
+      await Product.find({
 
-        $regex: keyword,
+        name: {
 
-        $options: "i"
+          $regex: keyword,
+          $options: "i"
 
-      }
+        }
 
+      });
+
+    res.json(products);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Search Failed"
     });
 
-  res.json(products);
+  }
 
 });
 
@@ -435,15 +526,25 @@ app.get("/search", async (req, res) => {
 
 app.get("/category/:name", async (req, res) => {
 
-  const products =
-    await Product.find({
+  try {
 
-      category:
-        req.params.name
+    const products =
+      await Product.find({
 
+        category:
+          req.params.name
+
+      });
+
+    res.json(products);
+
+  } catch (error) {
+
+    res.status(500).json({
+      message: "Category Fetch Failed"
     });
 
-  res.json(products);
+  }
 
 });
 
