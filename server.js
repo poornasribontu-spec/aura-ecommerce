@@ -1,16 +1,33 @@
 require("dns").setDefaultResultOrder("ipv4first");
+
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
+const bcrypt = require("bcryptjs");
 const path = require("path");
+
 require("dotenv").config();
+
+const Product = require("./models/Product");
+const User = require("./models/User");
+const Order = require("./models/Order");
 
 const app = express();
 
-// Middleware
+// ============================
+// MIDDLEWARE
+// ============================
+
+app.use(cors());
+
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
-// VERY IMPORTANT
+// ============================
+// STATIC FILES
+// ============================
+
 app.use(express.static(path.join(__dirname, "public")));
 
 // ============================
@@ -116,7 +133,7 @@ mongoose.connect(process.env.MONGO_URI)
 });
 
 // ============================
-// RESET PRODUCTS
+// ADD DEMO PRODUCTS
 // ============================
 
 app.get("/add-product", async (req, res) => {
@@ -176,7 +193,7 @@ app.get("/add-product", async (req, res) => {
 
     await Product.insertMany(products);
 
-    res.send("Products Reset Successfully");
+    res.send("Products Added Successfully");
 
   } catch (error) {
 
@@ -534,12 +551,11 @@ app.get("/category/:name", async (req, res) => {
 // ============================
 // SERVER
 // ============================
+
 const PORT = process.env.PORT || 10000;
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "public", "index.html"));
-});
-
 app.listen(PORT, () => {
+
   console.log(`Server running on port ${PORT}`);
+
 });
