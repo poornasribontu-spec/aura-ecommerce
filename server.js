@@ -1,19 +1,15 @@
-app.use(express.static("public"));
-
-app.get("/", (req, res) => {
-  res.sendFile(__dirname + "/public/index.html");
-});
 require('dns').setDefaultResultOrder('ipv4first');
 
 const express = require("express");
 const mongoose = require("mongoose");
-const Product = require("./models/Product");
-const User = require("./models/User");
-const Order = require("./models/Order");
 const cors = require("cors");
 const bcrypt = require("bcryptjs");
 
 require("dotenv").config();
+
+const Product = require("./models/Product");
+const User = require("./models/User");
+const Order = require("./models/Order");
 
 const app = express();
 
@@ -53,6 +49,18 @@ app.get("/register", (req, res) => {
 
 app.get("/checkout", (req, res) => {
   res.sendFile(__dirname + "/public/checkout.html");
+});
+
+app.get("/orders-page", (req, res) => {
+  res.sendFile(__dirname + "/public/orders.html");
+});
+
+app.get("/wishlist", (req, res) => {
+  res.sendFile(__dirname + "/public/wishlist.html");
+});
+
+app.get("/success", (req, res) => {
+  res.sendFile(__dirname + "/public/success.html");
 });
 
 // ============================
@@ -443,7 +451,7 @@ app.get("/category/:name", async (req, res) => {
 // SERVER
 // ============================
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 10000;
 
 app.listen(PORT, () => {
 
